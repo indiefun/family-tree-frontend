@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@logicflow/core": "^1.2.3",
+    "@logicflow/extension": "^1.2.3",
     "vue": "^3.2.47"
   },
   "devDependencies": {
