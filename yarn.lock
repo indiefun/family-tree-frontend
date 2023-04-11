@@ -117,6 +117,20 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.16.tgz#260f19b0a3300d22c3a3f52722c671dc561edaa3"
   integrity sha512-xJ7OH/nanouJO9pf03YsL9NAFQBHd8AqfrQd7Pf5laGyyTt/gToul6QYOA/i5i/q8y9iaM5DQFNTgpi995VkOg==
 
+"@logicflow/core@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@logicflow/core/-/core-1.2.3.tgz#dc5fddbeefedba374112ad5e661c969a9a745869"
+  integrity sha512-/ihwzilvAlzVtjymHj1j52WkiHXNjwdryayfQU4yGJoNeuwvJ1KZimlGX1cO/6hapb00HoCmJqiZnGSoBHVddg==
+  dependencies:
+    "@types/mousetrap" "^1.6.4"
+    mousetrap "^1.6.5"
+    preact "^10.4.8"
+
+"@types/mousetrap@^1.6.4":
+  version "1.6.11"
+  resolved "https://registry.yarnpkg.com/@types/mousetrap/-/mousetrap-1.6.11.tgz#ef9620160fdcefcb85bccda8aaa3e84d7429376d"
+  integrity sha512-F0oAily9Q9QQpv9JKxKn0zMKfOo36KHCW7myYsmUyf2t0g+sBTbG3UleTPoguHdE1z3GLFr3p7/wiOio52QFjQ==
+
 "@vitejs/plugin-vue@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.1.0.tgz#b6a9d83cd91575f7ee15593f6444397f68751073"
@@ -354,6 +368,11 @@ minimatch@^6.1.6:
   dependencies:
     brace-expansion "^2.0.1"
 
+mousetrap@^1.6.5:
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/mousetrap/-/mousetrap-1.6.5.tgz#8a766d8c272b08393d5f56074e0b5ec183485bf9"
+  integrity sha512-QNo4kEepaIBwiT8CDhP98umTetp+JNfQYBWvC1pc6/OAibuXtRcxZ58Qz8skvEHYvURne/7R8T5VoOI7rDsEUA==
+
 muggle-string@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/muggle-string/-/muggle-string-0.2.2.tgz#786aa53fea1652c61c6a59e1f839292b262bc72a"
@@ -382,6 +401,11 @@ postcss@^8.1.10, postcss@^8.4.21:
     nanoid "^3.3.4"
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
+
+preact@^10.4.8:
+  version "10.13.2"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.13.2.tgz#2c40c73d57248b57234c4ae6cd9ab9d8186ebc0a"
+  integrity sha512-q44QFLhOhty2Bd0Y46fnYW0gD/cbVM9dUVtNTDKPcdXSMA7jfY+Jpd6rk3GB0lcQss0z5s/6CmVP0Z/hV+g6pw==
 
 resolve@^1.22.1:
   version "1.22.2"
