@@ -141,6 +141,16 @@
   resolved "https://registry.yarnpkg.com/@types/mousetrap/-/mousetrap-1.6.11.tgz#ef9620160fdcefcb85bccda8aaa3e84d7429376d"
   integrity sha512-F0oAily9Q9QQpv9JKxKn0zMKfOo36KHCW7myYsmUyf2t0g+sBTbG3UleTPoguHdE1z3GLFr3p7/wiOio52QFjQ==
 
+"@types/omit@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/omit/-/omit-1.0.0.tgz#5752c53ca1dac93e1ee5a1a1a9cf24acf5a31b25"
+  integrity sha512-VfCjRBfxbweubSFJYjAo641svOQFOzzKUNMidCnILKYnu8zf4TCZxhCjNfT0PZIT3aiAwki6BQKh2O7uZVlkQg==
+
+"@types/uuid@^9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.1.tgz#98586dc36aee8dacc98cc396dbca8d0429647aa6"
+  integrity sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==
+
 "@vitejs/plugin-vue@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.1.0.tgz#b6a9d83cd91575f7ee15593f6444397f68751073"
@@ -403,6 +413,11 @@ nanoid@^3.3.4:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
   integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
 
+omit@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/omit/-/omit-1.0.1.tgz#058a01b4b6db1287b36ecb58dfa8e18778958017"
+  integrity sha512-WHNzQdTq2gO0iJgbPySheMN79fL3FtriIOGam8Ei4kRpdtTSdq9LX3BxSZlvKKz4vtiSUqASCFD3adel0zP/iA==
+
 path-parse@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
@@ -467,6 +482,11 @@ typescript@^4.9.3:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+
+uuid@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 vite@^4.2.0:
   version "4.2.1"
