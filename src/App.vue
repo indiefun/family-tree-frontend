@@ -1,14 +1,27 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue"
+import {onMounted, Ref, ref} from "vue"
 import LogicFlow from "@logicflow/core"
 import "@logicflow/core/dist/style/index.css"
 import Family from "./components/family"
+import Ancestor from "./components/ancestor"
+import Label from './components/label'
+import OrigLabel from './components/orig-label'
+import LayerLabel from './components/layer-label'
+import LinkLine from "./components/link-line";
 import { readonly } from "./readonly"
-import graphData from './graph-data'
+import dataPromise from './graph-data'
 import grid from './grid'
 
 const container = ref();
 const logicFlow = ref<LogicFlow>();
+
+function center(client: Ref) {
+  const value = client.value;
+  return {
+    x: value.clientLeft + value.clientWidth * 0.5,
+    y: value.clientTop + value.clientHeight * 0.5,
+  }
+}
 
 onMounted(() => {
   const lf = new LogicFlow({
@@ -21,6 +34,12 @@ onMounted(() => {
   })
 
   lf.register(Family)
+  lf.register(Ancestor)
+  lf.register(Label)
+  lf.register(OrigLabel)
+  lf.register(LayerLabel)
+  lf.register(LinkLine)
+
   lf.setTheme({
     snapline: {
       stroke: '#1E90FF', // 对齐线颜色
@@ -49,7 +68,7 @@ onMounted(() => {
       });
     }
   })
-  lf.render(graphData)
+  dataPromise(center(container)).then(data => lf.render(data))
   logicFlow.value = lf;
 })
 

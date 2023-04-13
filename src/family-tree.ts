@@ -1,8 +1,8 @@
 export interface 族 {
-    id: string,  // ID
+    id: string,   // ID
     序?: number,  // 长次三四
     行?: number,  // 行一行二
-    名?: string,  // 族长名字
+    名: string,   // 族长名字
     逝?: boolean, // 族长已逝否
     偶?: string,  // 配偶名字
     殉?: boolean, // 配偶已逝否
@@ -20,8 +20,9 @@ export interface 谱 {
     族: 族[],
 }
 
-import data from './assets/family-tree.json'
+export async function defaultBuild() {
+    const data = await import('./assets/family-tree.json')
+    return data.default as 谱
+}
 
-const tree = data as 谱;
-
-export default tree;
+export default defaultBuild

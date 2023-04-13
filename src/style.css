@@ -75,38 +75,61 @@ button:focus-visible {
 }
 
 /* 自定义节点样式 */
-.family-container {
-  font-size: 12px;
-  background-color: white;
+.border-box, .node-container, .node-line, .label-container {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.node-container, .label-container {
   border: #1a1a1a solid 1px;
 }
-.family-order {
-  height: 19px;
-  line-height: 19px;
-  text-align: center;
-  padding-left: 4px;
-  border-bottom: black solid 1px;
+.font-md, .node-container, .label-container {
+  font-size: 12px;
 }
-.family-name {
-  height: 19px;
-  line-height: 19px;
-  text-align: center;
-  border-bottom: black solid 1px;
-}
-.family-children {
-  height: 19px;
-  line-height: 19px;
-  text-align: center;
+.font-lg {
+  font-size: 24px;
 }
 .bg-black {
   background-color:#213547;
   color: white;
 }
-.bg-white {
+.bg-white, .node-container, .label-container {
   background-color: white;
   color: black;
 }
+.flex-column, .label-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.full-height, .label-container {
+  height: 100%;
+}
 
+.node-line {
+  height: 19px;
+  line-height: 19px;
+  text-align: center;
+  border-bottom: black solid 1px;
+}
+.node-line:first-child {
+  height: 20px;
+  line-height: 20px;
+}
+.node-line:last-child {
+  height: 20px;
+  line-height: 20px;
+  border-bottom: unset;
+}
+
+.p-l-sm {
+  padding-left: 4px;
+}
+
+.label-line {
+  text-align: center;
+}
 
 /*自定义锚点样式*/
 .custom-anchor {

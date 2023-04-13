@@ -1,8 +1,9 @@
 import { GridOptions } from "@logicflow/core/types/view/overlay/Grid";
 
-export const size = 20;
+export const enabled = true
+export const size = 20
 
-export default {
+export default enabled ? {
     size: size,
     visible: true,
     type: "dot",
@@ -10,4 +11,4 @@ export default {
       color: "#ababab",
       thickness: 1
     }
-} as GridOptions
+} as GridOptions : false
