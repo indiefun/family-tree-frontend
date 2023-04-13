@@ -24,6 +24,8 @@ function center(client: Ref) {
 }
 
 onMounted(() => {
+  const nodeTypes = ['family', 'ancestor']
+
   const lf = new LogicFlow({
     container: container.value,
     grid: grid,
@@ -31,6 +33,9 @@ onMounted(() => {
       enabled: true,
     },
     isSilentMode: readonly,
+    edgeGenerator: (sourceNode, targetNode, currentEdge) => {
+      if (nodeTypes.includes(sourceNode.type)) return 'link-line'
+    }
   })
 
   lf.register(Family)
@@ -47,9 +52,9 @@ onMounted(() => {
     }
   })
   lf.on("anchor:dragstart", ({ nodeModel }) => {
-    if (nodeModel.type === "family") {
+    if (nodeTypes.includes(nodeModel.type)) {
       lf.graphModel.nodes.forEach((node) => {
-        if (node.type === "family" && nodeModel.id !== node.id) {
+        if (nodeTypes.includes(node.type) && nodeModel.id !== node.id) {
           node.isShowAnchor = true;
           node.setProperties({
             isConnection: true
@@ -59,9 +64,9 @@ onMounted(() => {
     }
   })
   lf.on("anchor:dragend", ({ nodeModel }) => {
-    if (nodeModel.type === "family") {
+    if (nodeTypes.includes(nodeModel.type)) {
       lf.graphModel.nodes.forEach((node) => {
-        if (node.type === "family" && nodeModel.id !== node.id) {
+        if (nodeTypes.includes(node.type) && nodeModel.id !== node.id) {
           node.isShowAnchor = false;
           lf.deleteProperty(node.id, "isConnection");
         }
