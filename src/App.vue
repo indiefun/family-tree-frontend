@@ -59,7 +59,7 @@ onMounted(() => {
   })
   lf.extension.dndPanel.setPatternItems([
     {
-      icon: '/src/assets/svg/user-plus-fill.svg',
+      icon: '/user-plus-fill.svg',
       ...createNode(),
     }
   ])
