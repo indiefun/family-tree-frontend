@@ -1,7 +1,7 @@
-import { v4 as uuid } from 'uuid'
+import {v4 as uuid} from 'uuid'
 import omit from 'omit'
-import { 族, 谱 } from './family-tree'
-import { size, enabled as grid } from './grid'
+import {族, 谱} from './family-tree'
+import {enabled as grid, size} from './grid'
 
 const w = size * 6 // family node width
 const h = size * 4  // family node height
@@ -9,31 +9,44 @@ const lw = size * 4 // label width
 
 const hGap = size
 const vGap = size * 2
+
 const root = 'root'
+const title = 'title'
+export const origLabelId = 'orig-label'
 
 type XY = { x: number, y: number }
 type WH = { w: number, h: number }
 type BaseType = XY & { id: string, properties: WH }
-type NodeType = BaseType &
-    { parent: string, children: string[], layer: number } &
-    (
-        { type: 'family', properties: WH & Omit<族, '后'> } |
-        { type: 'ancestor', properties: WH & Pick<谱, '始' | '世' | '祖'> }
-    )
-type LabelType = BaseType &
-    (
-        {type: 'label', properties: WH & {名: string}} |
-        {type: 'orig-label', properties: WH & {世: number}} |
-        {type: 'layer-label', properties: WH & {世: number}}
-    )
-type MixinType = NodeType | LabelType
+export type CommonNodeType = { parent: string, children: string[], layer: number }
+export type FamilyNodeType = BaseType & CommonNodeType & { type: 'family', properties: WH & Omit<族, '后'> }
+export type AncestorNodeType = BaseType & CommonNodeType & { type: 'ancestor', properties: WH & Pick<谱, '始' | '世' | '祖'> }
+export type NodeType = FamilyNodeType | AncestorNodeType
+export type TitleLabelType = BaseType & {type: 'label', properties: WH & {名: string, 期: string}}
+export type OrigLabelType = BaseType & {type: 'orig-label', properties: WH & {世: number}}
+export type LayerLabelType = BaseType & {type: 'layer-label', properties: WH & {世: number}}
+export type LabelType = TitleLabelType | OrigLabelType | LayerLabelType
+export type MixinType = NodeType | LabelType
 
-type EdgeType = {
+export type EdgeType = {
     type: string,
     sourceNodeId: string,
     targetNodeId: string,
 }
 type NodeDict = Record<string, NodeType>
+
+export function createNode() {
+    return {
+        type: 'family',
+        properties: {
+            w: w,
+            h: h,
+            名: '姓名',
+            逝: false,
+            偶: '配偶',
+            殉: false,
+        }
+    }
+}
 
 // 遍历树结构
 function iterate(tree: 族[], handle: (node: 族) => void) {
@@ -71,7 +84,19 @@ function first<T>(list: T[] | undefined | null): T | null {
     return (list && list.length > 0) ? list[0] : null;
 }
 
-export function buildNodes(orig: 谱) {
+function layoutNodeChildren(nodes: NodeType[], dict: NodeDict, layer: number, left: number, families: 族[]): number {
+    for (let i = 0; i < families.length; ++i) {
+        const family = families[i]
+        const node = dict[family.id]
+        node.x = left + w + hGap
+        node.y = h * layer + vGap * layer
+        left = layoutNodeChildren(nodes, dict, layer + 1, left, family.后 ?? [])
+        left = Math.max(left, node.x)
+    }
+    return left
+}
+
+function buildNodes(orig: 谱) {
     const nodes: NodeType[] = []
     const edges: EdgeType[] = []
 
@@ -83,37 +108,10 @@ export function buildNodes(orig: 谱) {
 
     // 建立nodes的字典
     const dict = {} as NodeDict
-    {
-        nodes.forEach(node => dict[node.id] = node)
-    }
-
-    // 建立分层结构list
-    const list = [] as NodeType[][]
-    {
-        nodes.forEach(node => {
-            const l = node.layer - orig.世 - 1
-            if (!list[l]) list[l] = []
-            list[l].push(node)
-        })
-    }
+    nodes.forEach(node => dict[node.id] = node)
 
     // 计算Node坐标
-    {
-        for (let l = list.length - 1; l >= 0; --l) {
-            const array = list[l]
-            for (let i = 0; i < array.length; ++i) {
-                const node = array[i]
-                if (l === (list.length - 1)) {
-                    node.x = w * i + i * hGap
-                } else {
-                    const childId = first(node.children)
-                    const child = childId ? dict[childId] : null
-                    node.x = child?.x ?? 0
-                }
-                node.y = h * node.layer + node.layer * vGap
-            }
-        }
-    }
+    layoutNodeChildren(nodes, dict, orig.世 + 1, 0, orig.族)
 
     // 添加始祖Node
     {
@@ -179,17 +177,14 @@ function buildLabels(orig: 谱, nodes: NodeType[]) {
     const labels: LabelType[] = []
 
     const dict: NodeDict = {}
-    {
-        nodes.forEach(node => {
-            dict[node.id] = node
-        })
-    }
+    nodes.forEach(node => dict[node.id] = node)
+
+    const { top, left, right } = corner(nodes)
 
     // 添加左侧世数标签
     {
-        const {top, left} = corner(nodes);
         const origLabel: LabelType = {
-            id: 'orig-label',
+            id: origLabelId,
             type: 'orig-label',
             x: left - w * 0.5 - hGap - lw * 0.5,
             y: top,
@@ -224,17 +219,18 @@ function buildLabels(orig: 谱, nodes: NodeType[]) {
 
     // 添加标题
     {
-        const { top, left, right } = corner(nodes)
         const labelWidth = right - left + w + hGap * 2 + lw
+        const labelWidthFixed = (labelWidth * 0.5 - (labelWidth * 0.5) % size) * 2
         const labelHeight = size * 2
         labels.push({
-            id: 'title',
+            id: title,
             type: 'label',
-            x: left - w * 0.5 - hGap - lw + labelWidth * 0.5,
+            x: left - w * 0.5 - hGap - lw + labelWidthFixed * 0.5,
             y: top - h * 0.5 - vGap * 0.5 - labelHeight * 0.5,
             properties: {
                 名: orig.名,
-                w: labelWidth,
+                期: orig.期,
+                w: labelWidthFixed,
                 h: labelHeight,
             }
         })
@@ -252,7 +248,7 @@ function mixin(nodes: NodeType[], edges: EdgeType[], labels: LabelType[]) {
     }
 }
 
-type DataType = ReturnType<typeof mixin>
+export type DataType = ReturnType<typeof mixin>
 
 function align(data: DataType, center: XY, id?: string): DataType {
     const { nodes } = data
@@ -272,24 +268,82 @@ function align(data: DataType, center: XY, id?: string): DataType {
     }
 
     const offset = { x: center.x - focusCenter.x - overGrid.x, y: center.y - focusCenter.y - overGrid.y }
+    const offsetFixed = { x: offset.x - offset.x % size, y: offset.y - offset.y % size }
     nodes.forEach(node => {
-        node.x = node.x + offset.x
-        node.y = node.y + offset.y
+        node.x = node.x + offsetFixed.x
+        node.y = node.y + offsetFixed.y
     })
     return data
 }
 
-export function build(orig: 谱, center: XY, focus?: string) {
+export function decode(orig: 谱, center: XY, focus?: string) {
     const { nodes, edges } = buildNodes(orig)
     const { labels } = buildLabels(orig, nodes)
     const data = mixin(nodes, edges, labels)
     return align(data, center, focus)
 }
 
-export async function defaultBuild(center: XY) {
-    const json = await import('./family-tree')
-    const focus = await import('./focus-id')
-    return build(await json.default(), center, focus.default)
+function encodeFamilies(nodes: FamilyNodeType[], edges: EdgeType[]): 族[] {
+    const nodeDict = {} as Record<string, FamilyNodeType>
+    nodes.forEach(node => nodeDict[node.id] = node)
+    const familyDict = {} as Record<string, 族>
+    nodes.forEach(node => {
+        familyDict[node.id] = {
+            id: node.properties.id,
+            序: node.properties.序,
+            行: node.properties.行,
+            名: node.properties.名,
+            逝: node.properties.逝,
+            偶: node.properties.偶,
+            殉: node.properties.殉,
+            子: node.properties.子,
+            女: node.properties.女,
+            后: []
+        }
+    })
+    const edgeDict = {} as Record<string, string>
+    edges.forEach(edge => edgeDict[edge.targetNodeId] = edge.sourceNodeId)
+    const familyList = [] as 族[]
+    nodes.forEach(node => {
+        const family = familyDict[node.id]
+        const parent = familyDict[edgeDict[node.id]]
+        if (!parent) {
+            familyList.push(family)
+        } else {
+            parent.后?.push(family)
+            parent.后?.sort((l,r)=>((l.序 ?? 0) - (r.序 ?? 0)))
+        }
+    })
+    return familyList
 }
 
-export default defaultBuild
+export function encode(data: DataType): 谱 {
+    const { nodes, edges } = data
+    const dict: Record<string, MixinType> = {}
+    nodes.forEach(node => dict[node.id] = node)
+    const titleNode = dict[title] as TitleLabelType
+    const rootNode = dict[root] as AncestorNodeType
+    const childNodes = [] as FamilyNodeType[]
+    nodes.forEach(node => {
+        if (node.type === 'family') {
+            childNodes.push(node)
+        }
+    })
+    const families = encodeFamilies(childNodes, edges)
+    return {
+        名: titleNode.properties.名,
+        期: titleNode.properties.期,
+        始: rootNode.properties.始,
+        世: rootNode.properties.世,
+        祖: rootNode.properties.祖,
+        族: families
+    }
+}
+
+export async function defaultDecode(center: XY) {
+    const json = await import('./family-tree')
+    const focus = await import('./focus-id')
+    return decode(await json.default(), center, focus.default)
+}
+
+export default defaultDecode
