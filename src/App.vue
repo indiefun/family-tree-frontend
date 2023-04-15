@@ -13,7 +13,7 @@ import LinkLine from "./components/link-line";
 import { readonly } from "./readonly"
 import {defaultDecode, decode, encode, createNode, MixinType, DataType, origLabelId, OrigLabelType} from './graph-data'
 import grid from './grid'
-import { 谱, from } from "./family-tree";
+import { 谱, fromJson } from "./family-tree";
 
 const container = ref();
 const logicFlow = ref<LogicFlow>();
@@ -121,7 +121,7 @@ function onImportFileChange(event: any) {
   reader.readAsText(file)
   reader.onload = e => {
     try {
-      const json = from(e.target?.result as string)
+      const json = fromJson(e.target?.result as string)
       const data = decode(json, center(container), '')
       logicFlow.value?.render(data)
     } catch (err) {

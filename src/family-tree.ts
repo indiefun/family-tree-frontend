@@ -51,15 +51,26 @@ function validateTree(obj: any) {
     validateFamilies(obj, '族')
 }
 
-export function from(json: string): 谱 {
+export function fromJson(json: string) {
     const obj = JSON.parse(json)
     validateTree(obj)
     return obj as 谱
 }
 
+export async function fromUrl(url: string) {
+    const obj = await fetch(url).then(r => r.json())
+    validateTree(obj)
+    return obj as 谱
+}
+
 export async function defaultBuild() {
-    const data = await import('./assets/family-tree.json')
+    const data = await import('../public/scratch.json')
     return data.default as 谱
 }
 
-export default defaultBuild
+export default async function () {
+    const href = window.location.href
+    const url = new URL(href)
+    const jsonUrl = url.searchParams.get('json')
+    return jsonUrl ? fromUrl(jsonUrl) : defaultBuild()
+}
