@@ -20,6 +20,43 @@ export interface 谱 {
     族: 族[],
 }
 
+function validateRequired(obj: any, required: any) {
+    Object.keys(required).forEach(key => {
+        if (!Object.hasOwn(obj, key) || (typeof obj[key]) !== (typeof required[key])) {
+            throw `property \`${key}\` required`
+        }
+    })
+}
+
+function validateFamily(obj: any, key: string) {
+    const required = { 名: '' } as any
+    validateRequired(obj, required)
+    validateFamilies(obj, key)
+}
+
+function validateFamilies(obj: any, key: string) {
+    const arr = obj[key]
+    if (arr) {
+        if (arr instanceof Array) {
+            arr.forEach(o => validateFamily(o, '族'))
+        } else {
+            throw `property \`${key}\` not array`
+        }
+    }
+}
+
+function validateTree(obj: any) {
+    const required = { 名: '', 期: '', 始: '', 世: 1, 祖: '' } as any
+    validateRequired(obj, required)
+    validateFamilies(obj, '族')
+}
+
+export function from(json: string): 谱 {
+    const obj = JSON.parse(json)
+    validateTree(obj)
+    return obj as 谱
+}
+
 export async function defaultBuild() {
     const data = await import('./assets/family-tree.json')
     return data.default as 谱
