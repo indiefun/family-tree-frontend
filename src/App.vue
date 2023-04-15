@@ -122,6 +122,7 @@ function onImportFileChange(event: any) {
     const json = JSON.parse(e.target?.result) as 谱
     const data = decode(json, center(container), '')
     logicFlow.value?.render(data)
+    importInput.value.value = null
   }
 }
 

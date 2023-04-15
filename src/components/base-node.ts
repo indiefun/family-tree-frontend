@@ -24,9 +24,10 @@ export class BaseView extends HtmlNode {
 export class BaseModel extends HtmlNodeModel {
     getOutlineStyle() {
         const style = super.getOutlineStyle();
-        style.stroke = "none"
+        const { isSelected } = this
+        style.stroke = isSelected ? "blue" : "none"
         if (style.hover) {
-            style.hover.stroke = "none"
+            style.hover.stroke = "blue"
         }
         return style;
     }
