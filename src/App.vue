@@ -57,12 +57,14 @@ onMounted(() => {
       strokeWidth: 1, // 对齐线宽度
     }
   })
-  lf.extension.dndPanel.setPatternItems([
-    {
-      icon: '/user-plus-fill.svg',
-      ...createNode(),
-    }
-  ])
+  if (!readonly) {
+    lf.extension.dndPanel.setPatternItems([
+      {
+        icon: '/user-plus-fill.svg',
+        ...createNode(),
+      }
+    ])
+  }
   lf.on("anchor:dragstart", ({ nodeModel }) => {
     if (nodeTypes.includes(nodeModel.type)) {
       lf.graphModel.nodes.forEach((node) => {
@@ -177,7 +179,7 @@ function onLayerPropertiesChange() {
 </script>
 
 <template>
-  <div class="tool-bar">
+  <div class="tool-bar" v-if="!readonly">
     <button class="tool-btn" type="button" @click="onRefreshDataClick">
       <img class="svg-icon" alt="重绘谱图" src="./assets/svg/redo.svg">
     </button>
@@ -192,7 +194,7 @@ function onLayerPropertiesChange() {
     </button>
     <input class="import-input" type="file" accept="application/json" ref="importInput" @change="onImportFileChange"/>
   </div>
-  <div class="panel-box" v-show="selection">
+  <div class="panel-box" v-show="selection && !readonly">
     <label class="panel-title">编辑面板</label>
     <template v-if="selection?.type === 'label'">
       <div class="panel-line">

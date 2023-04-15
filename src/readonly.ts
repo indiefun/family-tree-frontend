@@ -1,6 +1,7 @@
-export const readonly = false;
+const href = window.location.href
+const url = new URL(href)
 
-// TODO
+export const readonly = !!url.searchParams.get('readonly');
 export default {
     readonly,
 }

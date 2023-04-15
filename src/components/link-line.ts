@@ -1,4 +1,5 @@
 import { PolylineEdge, PolylineEdgeModel } from "@logicflow/core";
+import { readonly } from "../readonly";
 
 type PolyPoint = {
     x: number;
@@ -33,6 +34,15 @@ class LinkLineView extends PolylineEdge {
 }
 
 class LinkLineModel extends PolylineEdgeModel {
+    getOutlineStyle() {
+        const style = super.getOutlineStyle();
+        const { isSelected } = this
+        style.stroke = isSelected && !readonly ? "blue" : "none"
+        if (style.hover) {
+            style.hover.stroke = !readonly ? "blue" : "none"
+        }
+        return style;
+    }
     updatePoints() {
         const pointsList = getSimplePolyline(
             { x: this.startPoint.x, y: this.startPoint.y },
@@ -49,15 +59,6 @@ class LinkLineModel extends PolylineEdgeModel {
     getEdgeStyle() {
         const style = super.getEdgeStyle();
         style.stroke = "black";
-        return style;
-    }
-    getOutlineStyle() {
-        const style = super.getOutlineStyle();
-        const { isSelected } = this
-        style.stroke = isSelected ? "blue" : "none"
-        if (style.hover) {
-            style.hover.stroke = "blue"
-        }
         return style;
     }
 }

@@ -1,4 +1,5 @@
 import { HtmlNode, HtmlNodeModel, h } from "@logicflow/core"
+import { readonly } from "../readonly";
 
 export class BaseView extends HtmlNode {
     getAnchorShape(anchorData: any) {
@@ -25,9 +26,9 @@ export class BaseModel extends HtmlNodeModel {
     getOutlineStyle() {
         const style = super.getOutlineStyle();
         const { isSelected } = this
-        style.stroke = isSelected ? "blue" : "none"
+        style.stroke = isSelected && !readonly ? "blue" : "none"
         if (style.hover) {
-            style.hover.stroke = "blue"
+            style.hover.stroke = !readonly ? "blue" : "none"
         }
         return style;
     }
