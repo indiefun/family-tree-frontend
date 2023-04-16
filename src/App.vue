@@ -4,12 +4,12 @@ import LogicFlow from "@logicflow/core"
 import { DndPanel, Snapshot } from '@logicflow/extension'
 import "@logicflow/core/dist/style/index.css"
 import "@logicflow/extension/lib/style/index.css";
-import Family from "./components/family"
-import Ancestor from "./components/ancestor"
-import Label from './components/label'
-import OrigLabel from './components/orig-label'
-import LayerLabel from './components/layer-label'
-import LinkLine from "./components/link-line";
+import Family from "./nodes/family"
+import Ancestor from "./nodes/ancestor"
+import Label from './nodes/label'
+import OrigLabel from './nodes/orig-label'
+import LayerLabel from './nodes/layer-label'
+import LinkLine from "./edges/link-line";
 import { readonly } from "./readonly"
 import {defaultDecode, decode, encode, createNode, MixinType, DataType, origLabelId, OrigLabelType} from './graph-data'
 import grid from './grid'
