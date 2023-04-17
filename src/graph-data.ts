@@ -343,7 +343,7 @@ export function encode(data: DataType): 谱 {
 export async function defaultDecode(center: XY) {
     const json = await import('./family-tree')
     const focus = await import('./focus-id')
-    return decode(await json.default(), center, focus.default)
+    return decode(await json.default(), center, focus.default())
 }
 
 export default defaultDecode

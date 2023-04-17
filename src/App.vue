@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue"
 import LogicFlow from "@logicflow/core"
-import { DndPanel, Snapshot } from '@logicflow/extension'
+import {Control, DndPanel, MiniMap, Snapshot} from '@logicflow/extension'
 import "@logicflow/core/dist/style/index.css"
 import "@logicflow/extension/lib/style/index.css";
 import Family from "./nodes/family"
@@ -13,7 +13,8 @@ import LinkLine from "./edges/link-line";
 import { readonly } from "./readonly"
 import {defaultDecode, decode, encode, createNode, MixinType, DataType, origLabelId, OrigLabelType} from './graph-data'
 import grid from './grid'
-import { 谱, fromJson } from "./family-tree";
+import { fromJson } from "./family-tree"
+import { focus } from './focus-id'
 
 const container = ref();
 const logicFlow = ref<LogicFlow>();
@@ -41,7 +42,7 @@ onMounted(() => {
     edgeGenerator: (sourceNode, targetNode, currentEdge) => {
       if (nodeTypes.includes(sourceNode.type)) return 'link-line'
     },
-    plugins: [DndPanel, Snapshot]
+    plugins: [DndPanel, Snapshot, Control, MiniMap ]
   })
 
   lf.register(Family)
@@ -50,6 +51,83 @@ onMounted(() => {
   lf.register(OrigLabel)
   lf.register(LayerLabel)
   lf.register(LinkLine)
+
+  lf.extension.control.addItem({
+    iconClass: "control-minimap",
+    title: "打开导航图",
+    text: "导航",
+    onClick: (lf: LogicFlow, ev: MouseEvent) => {
+      const position = lf.getPointByClient(ev.x, ev.y);
+      lf.extension.miniMap.show(
+          position.domOverlayPosition.x - 120,
+          position.domOverlayPosition.y + 35
+      );
+    }
+  });
+
+  lf.extension.control.addItem({
+    iconClass: "control-redraw",
+    title: "重新绘制图谱",
+    text: "重绘",
+    onClick: (lf: LogicFlow) => {
+      const graph = lf.getGraphData();
+      const tree = encode(graph)
+      const data = decode(tree, center(container), focus())
+      lf.render(data)
+    }
+  });
+
+  lf.extension.control.addItem({
+    iconClass: 'control-import',
+    title: '导入图谱文件',
+    text: '导入',
+    onClick: (lf: LogicFlow) => {
+      const element = document.createElement('input')
+      element.type = 'file'
+      element.accept = 'application/json'
+      element.onchange = (e: any) => {
+        const file = e.target.files[0]
+        const reader = new FileReader()
+        reader.readAsText(file)
+        reader.onload = e => {
+          try {
+            const json = fromJson(e.target?.result as string)
+            const data = decode(json, center(container), '')
+            lf.render(data)
+          } catch (err) {
+            alert(err)
+          }
+        }
+      }
+      element.click()
+    }
+  });
+
+  lf.extension.control.addItem({
+    iconClass: "control-export",
+    title: "导出图谱文件",
+    text: "导出",
+    onClick: (lf: LogicFlow) => {
+      const graphData = lf.getGraphData();
+      const familyTree = encode(graphData)
+      const json = JSON.stringify(familyTree)
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'family-tree.json';
+      link.click();
+    }
+  });
+
+  lf.extension.control.addItem({
+    iconClass: "control-snapshot",
+    title: "截图并下载",
+    text: "截图",
+    onClick: (lf: LogicFlow) => {
+      lf.getSnapshot('family-tree.png')
+    }
+  });
 
   lf.setTheme({
     snapline: {
@@ -60,7 +138,8 @@ onMounted(() => {
   if (!readonly) {
     lf.extension.dndPanel.setPatternItems([
       {
-        icon: '/user-plus-fill.svg',
+        label: '家庭',
+        icon: '/family.svg',
         ...createNode(),
       }
     ])
@@ -104,51 +183,6 @@ onMounted(() => {
   logicFlow.value = lf;
 })
 
-function onRefreshDataClick() {
-  const graph = logicFlow.value?.getGraphData();
-  const tree = encode(graph)
-  const data = decode(tree, center(container), '')
-  logicFlow.value?.render(data)
-}
-
-function onImportDataClick() {
-  importInput.value.click()
-}
-
-function onImportFileChange(event: any) {
-  const file = event.target.files[0]
-  const reader = new FileReader()
-  reader.readAsText(file)
-  reader.onload = e => {
-    try {
-      const json = fromJson(e.target?.result as string)
-      const data = decode(json, center(container), '')
-      logicFlow.value?.render(data)
-    } catch (err) {
-      alert(err)
-    }
-    importInput.value.value = null
-  }
-}
-
-function onExportDataClick() {
-  const graphData = logicFlow.value?.getGraphData();
-  const familyTree = encode(graphData)
-  const json = JSON.stringify(familyTree)
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'family-tree.json';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-function onExportImageClick() {
-  logicFlow.value?.getSnapshot('family-tree.png')
-}
-
 function onPropertiesChange() {
   if (selection.value?.id) {
     logicFlow.value?.setProperties(selection.value?.id, selection.value?.properties)
@@ -179,21 +213,6 @@ function onLayerPropertiesChange() {
 </script>
 
 <template>
-  <div class="tool-bar" v-if="!readonly">
-    <button class="tool-btn" type="button" @click="onRefreshDataClick">
-      <img class="svg-icon" alt="重绘谱图" src="./assets/svg/redo.svg">
-    </button>
-    <button class="tool-btn" type="button" @click="onImportDataClick">
-      <img class="svg-icon" alt="导入数据" src="./assets/svg/upload.svg">
-    </button>
-    <button class="tool-btn" type="button" @click="onExportDataClick">
-      <img class="svg-icon" alt="导出数据" src="./assets/svg/download.svg">
-    </button>
-    <button class="tool-btn" type="button" @click="onExportImageClick">
-      <img class="svg-icon" alt="导出图片" src="./assets/svg/external-link.svg">
-    </button>
-    <input class="import-input" type="file" accept="application/json" ref="importInput" @change="onImportFileChange"/>
-  </div>
   <div class="panel-box" v-show="selection && !readonly">
     <label class="panel-title">编辑面板</label>
     <template v-if="selection?.type === 'label'">
@@ -262,33 +281,6 @@ function onLayerPropertiesChange() {
 .container {
   width: 100%;
   height: 100%;
-}
-.import-input {
-  visibility: hidden;
-  width: 0;
-}
-.tool-bar {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  width: 150px;
-  z-index: 1;
-  padding: 5px 5px;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.tool-btn {
-  padding: 0;
-  width: 31px;
-  height: 31px;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
 }
 .panel-box {
   position: absolute;

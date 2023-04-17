@@ -155,3 +155,32 @@ button:focus-visible {
 .outgoing-anchor {
   stroke: #82b366;
 }
+
+/* 自定义Control Icon*/
+.lf-control-zoomOut {
+  background-image: url(./assets/svg/zoom-out.svg) !important;
+}
+.lf-control-zoomIn {
+  background-image: url(./assets/svg/zoom-in.svg) !important;
+}
+.lf-control-undo {
+  background-image: url(./assets/svg/undo.svg) !important;
+}
+.lf-control-redo {
+  background-image: url(./assets/svg/redo.svg) !important;
+}
+.control-minimap {
+  background-image: url(./assets/svg/preview.svg);
+}
+.control-redraw {
+  background-image: url(./assets/svg/redraw.svg);
+}
+.control-import {
+  background-image: url(./assets/svg/import.svg);
+}
+.control-export {
+  background-image: url(./assets/svg/export.svg);
+}
+.control-snapshot {
+  background-image: url(./assets/svg/snapshot.svg);
+}
