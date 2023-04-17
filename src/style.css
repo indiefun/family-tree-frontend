@@ -184,3 +184,18 @@ button:focus-visible {
 .control-snapshot {
   background-image: url(./assets/svg/snapshot.svg);
 }
+
+/* https://docs.logic-flow.cn/docs/#/zh/guide/extension/component-minimap */
+.lf-mini-map {
+  right: 5px;
+  bottom: 5px;
+}
+.lf-mini-map-header {
+  background-image: unset !important;
+  background-color: unset !important;
+  border: unset !important;
+}
+.lf-mini-map-graph {
+}
+.lf-mini-map-close {
+}

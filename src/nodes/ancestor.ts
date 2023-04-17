@@ -33,6 +33,10 @@ class AncestorView extends BaseView {
 }
 
 class AncestorModel extends BaseModel {
+    setAttributes() {
+        super.setAttributes();
+        this.menu = []
+    }
 }
 
 export default {

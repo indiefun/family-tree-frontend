@@ -1,5 +1,6 @@
 import { HtmlNode, HtmlNodeModel, h } from "@logicflow/core"
 import { readonly } from "../readonly";
+import {cloneNode} from "../graph-data";
 
 export class BaseView extends HtmlNode {
     getAnchorShape(anchorData: any) {
@@ -56,13 +57,27 @@ export class BaseModel extends HtmlNodeModel {
             validate: (sourceNode, targetNode, sourceAnchor, targetAnchor) => {
                 return sourceAnchor?.type === "bottom";
             }
-        });
+        })
         this.targetRules.push({
             message: "只允许连接上方的锚点",
             validate: (sourceNode, targetNode, sourceAnchor, targetAnchor) => {
                 return targetAnchor?.type === "top";
             }
-        });
+        })
+        this.menu = [
+            {
+                text: '复制',
+                callback: (node: any) => {
+                    this.graphModel.addNode(cloneNode(node))
+                }
+            },
+            {
+                text: '删除',
+                callback: (node: any) => {
+                    this.graphModel.deleteNode(node.id)
+                }
+            }
+        ]
     }
 
     getDefaultAnchor() {

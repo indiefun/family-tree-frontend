@@ -28,6 +28,7 @@ export class BaseLabelModel extends HtmlNodeModel {
         const { w, h } = this.properties
         this.width = w
         this.height = h
+        this.menu = []
     }
 
     getDefaultAnchor(): { x: number; y: number; id: string; }[] {

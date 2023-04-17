@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue"
 import LogicFlow from "@logicflow/core"
-import {Control, DndPanel, MiniMap, Snapshot} from '@logicflow/extension'
+import {Menu, Control, DndPanel, MiniMap, Snapshot} from '@logicflow/extension'
 import "@logicflow/core/dist/style/index.css"
 import "@logicflow/extension/lib/style/index.css";
 import Family from "./nodes/family"
@@ -42,7 +42,7 @@ onMounted(() => {
     edgeGenerator: (sourceNode, targetNode, currentEdge) => {
       if (nodeTypes.includes(sourceNode.type)) return 'link-line'
     },
-    plugins: [DndPanel, Snapshot, Control, MiniMap ]
+    plugins: [DndPanel, Snapshot, Control, MiniMap, Menu]
   })
 
   lf.register(Family)
@@ -56,13 +56,7 @@ onMounted(() => {
     iconClass: "control-minimap",
     title: "打开导航图",
     text: "导航",
-    onClick: (lf: LogicFlow, ev: MouseEvent) => {
-      const position = lf.getPointByClient(ev.x, ev.y);
-      lf.extension.miniMap.show(
-          position.domOverlayPosition.x - 120,
-          position.domOverlayPosition.y + 35
-      );
-    }
+    onClick: (lf: LogicFlow) => lf.extension.miniMap.show()
   });
 
   lf.extension.control.addItem({
@@ -226,6 +220,10 @@ function onLayerPropertiesChange() {
       </div>
     </template>
     <template v-if="selection?.type === 'family'">
+      <div class="panel-line">
+        <label class="panel-label">ID</label>
+        <input class="panel-input" type="text" v-model="selection.properties.id" readonly/>
+      </div>
       <div class="panel-line">
         <label class="panel-label">顺序</label>
         <input class="panel-input" type="number" v-model="selection.properties.序" @change="onPropertiesChange"/>

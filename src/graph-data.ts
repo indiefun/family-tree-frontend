@@ -48,6 +48,13 @@ export function createNode() {
     }
 }
 
+export function cloneNode(node: MixinType) {
+    const clone = Object.assign({}, node, {id: uuid()})
+    clone.properties = Object.assign({}, node.properties, {id: clone.id})
+    clone.x = clone.x + w + hGap
+    return clone
+}
+
 // 遍历树结构
 function iterate(tree: 族[], handle: (node: 族) => void) {
     tree.forEach(node => {
